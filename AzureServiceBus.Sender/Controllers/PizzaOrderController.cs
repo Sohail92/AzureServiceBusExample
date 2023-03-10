@@ -14,7 +14,7 @@ public class PizzaOrderController : Controller
     private const string QueueName = "pizzaqueue";
     
     [HttpPost]
-    [Route("/PizzaOrder/CreateOrder", Name = "Custom")]
+    [Route("/PizzaOrder/CreateOrder", Name = "CreateOrder")]
     public async Task<IActionResult> CreateOrder([FromForm] PizzaOrderForm orderForm)
     {
         var pizzaOrders = orderForm.Name.Select((n, i) => new PizzaOrder { Name = n, Quantity = orderForm.Quantity[i] }).Where(q => q.Quantity > 1);
