@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model PizzaOrderForm;
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Order your pizza here!</p>
+</div>
+
+<form method="post">
+    Margherita <input type="hidden" value="Margherita" asp-for="Name" />
+    Order Quantity <input asp-for="Quantity" value="0"/>
+    
+    <br />
+    Hawaiian <input value="Hawaiian" type="hidden" asp-for="Name" />
+    Order Quantity <input asp-for="Quantity" value="0" />
+    
+    <br/>
+    Meat Feast <input type="hidden" value="Meat Feast" asp-for="Name" />
+    Order Quantity <input asp-for="Quantity" value="0" />
+    
+    <br/>
+    Pepperoni <input type="hidden" value="Pepperoni" asp-for="Name" />
+    Order Quantity <input asp-for="Quantity" value="0" />
+    
+    <br/>
+    Veggie Hot <input type="hidden" value="Veggie Hot" asp-for="Name" />
+    Order Quantity <input asp-for="Quantity" value="0"/>
+
+    <button asp-route="Custom" type="submit">Submit</button>
+</form>
