@@ -9,7 +9,6 @@ namespace AzureServiceBus.Sender.Controllers;
 [Route("[controller]")]
 public class PizzaOrderController : Controller
 {
-    // TODO: Should use configuration for these
     private const string ConnectionString = "";
     private const string QueueName = "pizzaqueue";
     
@@ -17,16 +16,29 @@ public class PizzaOrderController : Controller
     [Route("/PizzaOrder/CreateOrder", Name = "CreateOrder")]
     public async Task<IActionResult> CreateOrder([FromForm] PizzaOrderForm orderForm)
     {
-        var pizzaOrders = orderForm.Name.Select((n, i) => new PizzaOrder { Name = n, Quantity = orderForm.Quantity[i] }).Where(q => q.Quantity > 1);
+        //var pizzaOrders = orderForm.Name.Select((n, i) => new PizzaOrder { Name = n, Quantity = orderForm.Quantity[i] }).Where(q => q.Quantity > 1).ToList();
 
-        await ProcessOrder(pizzaOrders);
+        var pizzasToOrder = new List<PizzaOrder>();
+        for (int i = 0; i < orderForm.Name.Length; i++)
+        {
+            if (orderForm.Quantity[i] > 0)
+            {
+                pizzasToOrder.Add(new PizzaOrder
+                {
+                    Name = orderForm.Name[i],
+                    Quantity = orderForm.Quantity[i]
+                });
+            }
+        }
 
         var fakeOrderId = Guid.NewGuid().ToString()[..6];
+
+        await ProcessOrder(pizzasToOrder);
 
         return View("OrderPlaced", fakeOrderId);
     }
 
-    private async Task ProcessOrder(IEnumerable<PizzaOrder> orders)
+    private async Task ProcessOrder(List<PizzaOrder> order)
     {
         // TODO: Should abstract this out to an interface e.g. IMessagePublisher
         
@@ -38,7 +50,7 @@ public class PizzaOrderController : Controller
 
         await using var sender = client.CreateSender(QueueName);
 
-        var messageToSend = new ServiceBusMessage(JsonConvert.SerializeObject(orders));
+        var messageToSend = new ServiceBusMessage(JsonConvert.SerializeObject(order));
 
         await sender.SendMessageAsync(messageToSend);
     }
